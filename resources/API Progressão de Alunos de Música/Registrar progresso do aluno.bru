@@ -1,0 +1,22 @@
+meta {
+  name: Registrar progresso do aluno
+  type: http
+  seq: 7
+}
+
+post {
+  url: {{baseUrl}}/progress
+  body: json
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{tokenInstrutor}}
+}
+
+body:json {
+  {
+    "studentId": {{idAluno}},
+    "lessonId": {{idLicao}}
+  }
+}

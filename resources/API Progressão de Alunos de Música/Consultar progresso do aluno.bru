@@ -1,0 +1,19 @@
+meta {
+  name: Consultar progresso do aluno
+  type: http
+  seq: 8
+}
+
+get {
+  url: {{baseUrl}}/students/progress/:studentId
+  body: none
+  auth: bearer
+}
+
+params:path {
+  studentId: {{idAluno}}
+}
+
+auth:bearer {
+  token: {{tokenAluno}}
+}

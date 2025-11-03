@@ -1,0 +1,72 @@
+meta {
+  name: Registrar aluno
+  type: http
+  seq: 3
+}
+
+post {
+  url: {{baseUrl}}/students/register
+  body: json
+  auth: inherit
+}
+
+body:json {
+  {
+    "name": "{{nomeAluno}}",
+    "email": "{{emailAluno}}",
+    "password": "123456"
+  }
+}
+
+script:pre-request {
+  // Função para gerar nome aleatório
+  function gerarNomeAleatorio() {
+    const primeiros = ["Ana", "João", "Maria", "Carlos", "Fernanda", "Lucas", "Patrícia", "Diego", "Juliana", "Rafael"];
+    const sobrenomes = ["Silva", "Souza", "Oliveira", "Pereira", "Costa", "Santos", "Gomes", "Rodrigues", "Almeida", "Lima"];
+    
+    const primeiro = primeiros[Math.floor(Math.random() * primeiros.length)];
+    const sobrenome = sobrenomes[Math.floor(Math.random() * sobrenomes.length)];
+    return `${primeiro} ${sobrenome}`;
+  }
+  
+  // Função para gerar e-mail coerente com o nome
+  function gerarEmail(nomeAluno) {
+    const timestamp = Date.now();
+    const emailAluno = nomeAluno.toLowerCase().replace(/\s+/g, ".") + `.${timestamp}@teste.com`;
+    return emailAluno;
+  }
+  
+  // Gerar valores dinâmicos
+  const nomeAluno = gerarNomeAleatorio();
+  const emailAluno = gerarEmail(nomeAluno);
+  
+  // Salvar nas variáveis de ambiente do Bruno (escopo atual)
+  bru.setVar("nomeAluno", nomeAluno);
+  bru.setVar("emailAluno", emailAluno);
+  
+  // (Opcional) log no console do Bruno para conferência
+  console.log(`Nome gerado: ${nomeAluno}`);
+  console.log(`Email gerado: ${emailAluno}`);
+  
+}
+
+script:post-response {
+  try {
+    const body = res.getBody();
+  
+    if (body && body.id) {
+  bru.setEnvVar("idAluno", res.getBody().id);
+  console.log("✅ idAluno salvo:", res.getBody().id);
+    } else {
+      console.warn("Id não encontrado no body:", res.getBody());
+    }
+    if (body && body.email) {
+  bru.setEnvVar("emailAluno", res.getBody().email);
+  console.log("✅ emailAluno salvo:", res.getBody().email);
+    } else {
+      console.warn("Email não encontrado no body:", res.getBody());
+    }
+  } catch (err) {
+    console.error("Erro ao parsear resposta:", err);
+  }
+}

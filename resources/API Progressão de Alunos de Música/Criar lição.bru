@@ -1,0 +1,91 @@
+meta {
+  name: Criar lição
+  type: http
+  seq: 5
+}
+
+post {
+  url: {{baseUrl}}/lessons
+  body: json
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{tokenInstrutor}}
+}
+
+body:json {
+  {
+    "title": "{{titulo}}",
+    "description": "{{descricao}}"
+  }
+}
+
+script:pre-request {
+  // Lista de títulos e descrições de disciplinas musicais
+  const disciplinas = [
+    { titulo: "Teoria Musical", descricao: "Introdução aos fundamentos da música, escalas e acordes para leitura e escrita musical." },
+    { titulo: "Harmonia Funcional", descricao: "Explora progressões de acordes e relações tonais em arranjos e composições populares e eruditas." },
+    { titulo: "Percepção Auditiva", descricao: "Treina o ouvido musical para identificar intervalos, acordes e ritmos com precisão." },
+    { titulo: "Leitura Rítmica", descricao: "Foco em leitura de partitura rítmica, compassos compostos e síncopas aplicadas à performance instrumental." },
+    { titulo: "Improvisação Musical", descricao: "Desenvolve criatividade e fluência melódica com escalas e modos em diferentes estilos musicais." },
+    { titulo: "Composição Popular", descricao: "Criação de músicas originais com foco em letra, melodia e harmonia popular." },
+    { titulo: "Técnica Vocal", descricao: "Trabalha respiração, projeção e afinação para controle vocal e interpretação expressiva." },
+    { titulo: "Prática de Conjunto", descricao: "Experiência coletiva de ensaio e performance, desenvolvendo integração e escuta ativa." },
+    { titulo: "História da Música", descricao: "Aborda evolução da música ocidental e brasileira, períodos e principais compositores." },
+    { titulo: "Arranjo Musical", descricao: "Técnicas para adaptar músicas a diferentes formações instrumentais e explorar timbres e texturas." },
+    { titulo: "Canto Coral", descricao: "Desenvolve afinação, harmonia vocal e interpretação em grupo." },
+    { titulo: "Ritmos Brasileiros", descricao: "Estudo prático de samba, baião e maracatu com ênfase em linguagem rítmica e percussão." },
+    { titulo: "Piano Popular", descricao: "Aborda harmonia moderna, voicings e acompanhamento em estilos como jazz, pop e MPB." },
+    { titulo: "Guitarra Elétrica", descricao: "Explora técnicas de solo, riffs e efeitos com fundamentos de harmonia e improvisação." },
+    { titulo: "Violão Clássico", descricao: "Prática de dedilhado e leitura de partitura com foco em técnica e expressão musical." },
+    { titulo: "Contrabaixo Elétrico", descricao: "Trabalha groove, leitura e independência rítmica para execução em bandas." },
+    { titulo: "Bateria Popular", descricao: "Desenvolve coordenação, leitura rítmica e variações de grooves em diferentes estilos." },
+    { titulo: "Regência Coral", descricao: "Estudo de gestual e técnicas de ensaio para condução de grupos vocais." },
+    { titulo: "Regência Orquestral", descricao: "Introduz fundamentos da direção de orquestras e leitura de partitura completa." },
+    { titulo: "Produção Musical", descricao: "Gravação, mixagem e masterização com softwares de áudio, explorando estética e sonoridade." },
+    { titulo: "Tecnologia Musical", descricao: "Foco em softwares e equipamentos digitais aplicados à composição e performance." },
+    { titulo: "Música e Educação", descricao: "Reflexão sobre o papel da música no ensino e metodologias educativas." },
+    { titulo: "Musicoterapia", descricao: "Uso da música como ferramenta terapêutica para saúde e bem-estar." },
+    { titulo: "Etnomusicologia", descricao: "Analisa culturas musicais e suas relações sociais e históricas." },
+    { titulo: "Orquestra de Câmara", descricao: "Prática coletiva com repertório clássico e contemporâneo para pequenos grupos." },
+    { titulo: "Leitura à Primeira Vista", descricao: "Treina fluência e precisão na leitura de partituras novas." },
+    { titulo: "Instrumentação e Orquestração", descricao: "Explora possibilidades tímbricas e combinações instrumentais em arranjos." },
+    { titulo: "Música e Cinema", descricao: "Estudo da trilha sonora e suas funções narrativas e estéticas em filmes." },
+    { titulo: "Ritmos Afro-Cubanos", descricao: "Análise e prática de padrões rítmicos do Caribe aplicados à percussão." },
+    { titulo: "Improvisação Jazz", descricao: "Desenvolve linguagem jazzística com escalas, arpejos e progressões harmônicas." }
+  ];
+  
+  // Escolhe aleatoriamente uma disciplina
+  const escolhida = disciplinas[Math.floor(Math.random() * disciplinas.length)];
+  
+  // Adiciona um sufixo único ao título para evitar duplicidade
+  const timestamp = Date.now();
+  const titulo = `${escolhida.titulo} ${timestamp}`;
+  const descricao = escolhida.descricao;
+  
+  // Salva como variáveis para uso na requisição
+  bru.setVar("titulo", titulo);
+  bru.setVar("descricao", descricao);
+  
+  // Log para depuração
+  console.log("Título gerado:", titulo);
+  console.log("Descrição gerada:", descricao);
+  
+}
+
+script:post-response {
+  try {
+    const body = res.getBody();
+  
+    if (body && body.id) {
+      bru.setEnvVar("idLicao", res.getBody().id);
+      console.log("idLicao salvo:", res.getBody().id);
+    } else {
+      console.warn("idLicao não encontrado no body:", res.getBody());
+    }
+  } catch (err) {
+    console.error("Erro ao parsear resposta:", err);
+  }
+  
+}

@@ -1,0 +1,9 @@
+{
+  "version": "1",
+  "name": "API Progressão de Alunos de Música",
+  "type": "collection",
+  "ignore": [
+    "node_modules",
+    ".git"
+  ]
+}

@@ -1,0 +1,15 @@
+meta {
+  name: Listar lições
+  type: http
+  seq: 6
+}
+
+get {
+  url: {{baseUrl}}/lessons
+  body: none
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{tokenAluno}}
+}
