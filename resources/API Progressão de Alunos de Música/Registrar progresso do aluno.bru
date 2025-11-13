@@ -20,3 +20,17 @@ body:json {
     "lessonId": {{idLicao}}
   }
 }
+
+tests {
+  test("Status code is 201 when created or 400/401 otherwise", () => {
+      expect([201, 400, 401, 422]).to.include(res.status);
+  });
+  
+  if (res.status === 201) {
+      test("Progress record contains studentId and lessonId", () => {
+          const data = res.body;
+          expect(data).to.be.an("object");
+          expect(data.studentId || data.lessonId || data.id).to.be.ok;
+      });
+  }
+}

@@ -70,3 +70,26 @@ script:post-response {
     console.error("Erro ao parsear resposta:", err);
   }
 }
+
+tests {
+  test("Status code is 201", () => {
+      expect(res.status).to.equal(201);
+  });
+  
+  test("Response has JSON content-type", () => {
+      expect(res.headers["content-type"]).to.contain("application/json");
+  });
+  
+  test("Response body is a non-empty object", () => {
+      const data = res.body;
+      expect(data).to.be.an("object");
+      expect(Object.keys(data).length).to.be.greaterThan(0);
+  });
+  
+  test("Contains id or message in response", () => {
+      const data = res.body;
+      expect(
+          data.id !== undefined || data.message !== undefined || data.name !== undefined
+      ).to.be.true;
+  });
+}

@@ -70,3 +70,21 @@ script:post-response {
     console.error("Erro ao parsear resposta:", err);
   }
 }
+
+tests {
+  test("Status code is 201", () => {
+      expect(res.status).to.equal(201);
+  });
+  
+  test("Response has JSON type", () => {
+      expect(res.headers["content-type"]).to.contain("application/json");
+  });
+  
+  test("Body contains id, message, or name", () => {
+      const data = res.body;
+      expect(data).to.be.an("object");
+      expect(
+          data.id !== undefined || data.message !== undefined || data.name !== undefined
+      ).to.be.true;
+  });
+}

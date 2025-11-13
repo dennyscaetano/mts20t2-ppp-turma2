@@ -32,3 +32,22 @@ script:post-response {
   }
   
 }
+
+tests {
+  test("Status code is 200", () => {
+      expect(res.status).to.equal(200);
+  });
+  
+  test("Response contains token", () => {
+      expect(res.headers["content-type"]).to.contain("application/json");
+      const data = res.body;
+      expect(data).to.have.property("token");
+      expect(data.token).to.be.a("string");
+      expect(data.token.length).to.be.greaterThan(10);
+  });
+  
+  test("Token has JWT structure", () => {
+      const jwtRegex = /^[A-Za-z0-9-_]+\.[A-Za-z0-9-_]+\.[A-Za-z0-9-_]+$/;
+      expect(res.body.token).to.match(jwtRegex);
+  });
+}

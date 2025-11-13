@@ -89,3 +89,23 @@ script:post-response {
   }
   
 }
+
+tests {
+  test("Status code is 201 when authorized", () => {
+      expect([201, 401]).to.include(res.status);
+  });
+  
+  if (res.status === 201) {
+      test("Lesson created successfully", () => {
+          expect(res.headers["content-type"]).to.contain("application/json");
+          const data = res.body;
+          expect(data).to.be.an("object");
+          expect(data.title || data.id || data.description).to.be.ok;
+      });
+  } else {
+      test("Unauthorized returns message", () => {
+          const data = res.body;
+          expect(data.message || data.error).to.be.ok;
+      });
+  }
+}

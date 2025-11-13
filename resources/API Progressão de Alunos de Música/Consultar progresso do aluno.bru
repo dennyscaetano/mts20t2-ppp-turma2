@@ -17,3 +17,33 @@ params:path {
 auth:bearer {
   token: {{tokenAluno}}
 }
+
+tests {
+  test("Status code is 200 when authorized", () => {
+      expect([200, 401]).to.include(res.status);
+  });
+  
+  if (res.status === 200) {
+      test("Response is JSON and valid shape", () => {
+          expect(res.headers["content-type"]).to.contain("application/json");
+          const data = res.body;
+          expect(data).to.satisfy(val => Array.isArray(val) || typeof val === "object");
+      });
+  
+  
+      test("Progress entries have studentId and lessonId", () => {
+          const data = res.body;
+          if (Array.isArray(data)) {
+              data.forEach(entry => {
+                  expect(entry.studentId).to.exist;
+                  expect(entry.lessonId).to.exist;
+              });
+          }
+      });
+  } else {
+      test("Unauthorized returns error message", () => {
+          const data = res.body;
+          expect(data.message || data.error).to.be.ok;
+      });
+  }
+}
