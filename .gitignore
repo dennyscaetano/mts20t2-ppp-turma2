@@ -1,2 +1,9 @@
 node_modules/
 .DS_Store
+report-jmeter/
+*.log
+.env
+.vscode/
+.idea/
+html-report.html
+jmeter.log
